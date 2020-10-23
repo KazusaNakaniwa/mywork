@@ -192,24 +192,32 @@ def check_board(b):
     return True
 
 xs, ys = 0, 0
-def solve(x, y, u, b):
-    #print(xa, ya)
+comp_cnt = 0
+used = [False for i in range(pm.num)]
+def solve(x, y, b):
+    global used
+    #print(x, y)
     #print_board()
 
     cnt = 0
-    for i in u:
+    for i in used:
         if not i:
             cnt += 1
-    if 0:
-        print(u)
+    if cnt <= 0:
+        global comp_cnt
+        comp_cnt += 1
+        print(used)
         print_board()
+        print("#" + str(comp_cnt) + ":")
+        print_board()
+        print("Completed!!")
 
     if not check_board(b):
         #print("Less than 4 boxes")
         return False
      
     for i in range(pm.num):
-        if u[i]: 
+        if used[i]: 
             continue
         for j in pm.mino[i]:
             #print(i, x, y)
@@ -235,14 +243,12 @@ def solve(x, y, u, b):
                 for l in k:
                     board[x+l][yt] = i
                 yt += 1
-            u[i] = True
+            used[i] = True
             idx = i
 
-            if all(u):
-                print("---")
-                print_board()
-                print("Completed!!")
-                sys.exit()
+#            if all(used):
+#                return True
+#                #sys.exit()
 
             minx, miny = 0, 0
             flag = False
@@ -256,16 +262,15 @@ def solve(x, y, u, b):
                 if flag:
                     break
 
-            solve(minx, miny, u, b)
+            solve(minx, miny, b)
             restore(i, j, xs, ys, b)
             x = xs
             y = ys
-            u[i] = False
+            used[i] = False
             #print("Restore")
                         
     return False     
 
 #print_mino()
-used = [False for i in range(pm.num)]
 board = [[-1 for i in range(w)] for j in range(h)]
-solve(0, 0, used, board)
+solve(0, 0, board)
